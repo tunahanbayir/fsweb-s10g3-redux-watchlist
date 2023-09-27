@@ -1,15 +1,34 @@
-import { useState } from "react";
+
 import { Switch, Route, NavLink } from "react-router-dom";
 import Movie from "./components/Movie";
 import FavMovie from "./components/FavMovie";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, nextMovie, prevMovie, firstMovie } from "./action/action";
+
 
 function App() {
-  const [sira, setSira] = useState(0);
-  const favMovies = [];
+  const sira = useSelector(store => store.sira);
+  const favMovies = useSelector(store => store.favMovies)
+  const movies = useSelector(store => store.movies);
 
-  function sonrakiFilm() {
-    setSira(sira + 1);
+  const dispatch  = useDispatch();
+
+  function handleNext() {
+    dispatch(nextMovie());
   }
+
+  function handlePrev() {
+    dispatch(prevMovie());
+  }
+
+  function handleAddFavorite() {
+    dispatch(addFavorite(movies[sira]));
+  }
+
+  function handleFirst() {
+    dispatch(firstMovie());
+  }
+
 
   return (
     <div className="wrapper max-w-2xl mx-auto">
@@ -26,13 +45,34 @@ function App() {
           <Movie sira={sira} />
 
           <div className="flex gap-3 justify-end py-3">
+            {
+              sira > 0 && 
+              <>
+              <button
+              onClick={handleFirst}
+              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+            >
+              Başa dön
+            </button>
+
             <button
-              onClick={sonrakiFilm}
+              onClick={handlePrev}
+              className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
+            >
+             Önceki
+            </button> 
+            </>
+            }
+           
+
+
+            <button
+              onClick={handleNext}
               className="select-none px-4 py-2 border border-blue-700 text-blue-700 hover:border-blue-500 hover:text-blue-500"
             >
               Sıradaki
             </button>
-            <button className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
+            <button onClick ={handleAddFavorite} className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white">
               Listeme ekle
             </button>
           </div>
